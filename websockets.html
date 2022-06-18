@@ -1,0 +1,76 @@
+<!-- websockets.html -->
+<input id="input" type="text" />
+<button onclick="send()">Send</button>
+<pre id="output"></pre>
+<canvas id="gameCanvas" width="600" height="500" style="border:1px solid #000000;">
+</canvas>
+<script>
+    var keyHasDownW = false
+    var keyHasDownS = false
+    var keyHasDownA = false
+    var keyHasDownD = false
+
+    var input = document.getElementById("input");
+    var output = document.getElementById("output");
+    var socket = new WebSocket("ws://localhost:5555/echo");
+    var gameCanvas = document.getElementById("gameCanvas");
+    var ctx = gameCanvas.getContext("2d");
+
+    socket.onopen = function () {
+        output.innerHTML += "Status: Connected\n";
+    };
+
+    socket.onmessage = function (e) {
+        ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+        ctx.fillStyle = "#000000";
+        JSON.parse(e.data).forEach(function(spirit) {
+            ctx.fillRect(spirit.x, spirit.y, 5, 5);
+        })
+        //output.innerHTML += "Server: " + e.data + "\n";
+    };
+
+    function keyEventUp(event) {
+        var key = event.keyEvent || event.which;
+        var keyValue = String.fromCharCode(key);
+        switch(keyValue) {
+            case 'W':
+                keyHasDownW = false;
+                socket.send(key);
+                break;
+            case 'A':
+                keyHasDownA = false;
+                socket.send(key);
+                break;
+            case 'S':
+                keyHasDownS = false;
+                socket.send(key);
+                break;
+            case 'D':
+                keyHasDownD = false;
+                socket.send(key);
+                break;
+            }
+    }
+
+    function keyEventDown(event) {
+        var key = event.keyEvent || event.which;
+        var keyValue = String.fromCharCode(key);
+        switch(keyValue) {
+            case 'W':
+                keyHasDownW ? ()=>{} : socket.send(key); keyHasDownW = true;
+                break;
+            case 'A':
+                 keyHasDownA ? ()=>{} : socket.send(key); keyHasDownA = true;
+                break;
+            case 'S':
+                keyHasDownS ? ()=>{} : socket.send(key); keyHasDownS = true;
+                break;
+            case 'D':
+                keyHasDownD ? ()=>{} : socket.send(key); keyHasDownD = true;
+                break;
+        }
+    }
+    document.addEventListener('keydown', keyEventDown);
+    document.addEventListener('keyup', keyEventUp);
+    
+</script>

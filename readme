@@ -1,0 +1,7 @@
+A basic io game implemented in Go lang,
+we can move our player in the html canvas now.
+
+### how to run
+
+    go mod tidy
+    go run .
